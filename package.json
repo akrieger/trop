@@ -40,7 +40,7 @@
     "lint-staged": "^15.2.10",
     "nock": "^13.5.5",
     "prettier": "^3.3.3",
-    "smee-client": "^2.0.4",
+    "smee-client": "^4.3.1",
     "typescript": "*",
     "vitest": "^3.0.5"
   },
