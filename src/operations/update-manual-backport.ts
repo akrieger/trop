@@ -123,7 +123,9 @@ please check out #${pr.number}`;
     // We should only comment if there is not a previous existing comment
     const shouldComment = !existingComments.some(
       (comment) =>
-        comment.body === commentBody || comment.body.contains(`#${pr.number}`),
+        comment.body &&
+        (comment.body === commentBody ||
+          comment.body.includes(`#${pr.number}`)),
     );
 
     if (shouldComment) {
