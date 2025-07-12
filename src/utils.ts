@@ -609,7 +609,7 @@ export const backportImpl = async (
             base: targetBranch,
             title: branchAwarePrTitle,
             body: await createBackportComment(context, pr),
-            maintainer_can_modify: false,
+            maintainer_can_modify: true,
           }),
         );
 
