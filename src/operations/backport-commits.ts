@@ -179,13 +179,15 @@ export const backportCommitsToBranch = async (options: BackportOptions) => {
         await git.raw(['show', '-s', "--format='%B'", commit.hash]),
       );
 
-      const newMessage = `${commitMessage}\n\nCo-authored-by: ${authorName} <${authorEmail}>`;
-
       const newCommit = await options.github.git.createCommit(
         options.context.repo({
           parents: [baseCommitSha],
           tree: newTree.data.sha,
-          message: newMessage,
+          message: commitMessage,
+          author: {
+            name: authorName,
+            email: authorEmail,
+          },
         }),
       );
 
