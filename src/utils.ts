@@ -96,12 +96,29 @@ const tryBackportAllCommits = async (opts: TryBackportOptions) => {
   const { context } = opts;
   if (!context) return;
 
-  const commits = (
-    await context.octokit.paginate(
-      'GET /repos/{owner}/{repo}/pulls/{pull_number}/commits',
-      context.repo({ pull_number: opts.pr.number, per_page: 100 }),
-    )
-  ).map((commit) => commit.sha);
+  const full_commits = await context.octokit.paginate(
+    'GET /repos/{owner}/{repo}/pulls/{pull_number}/commits',
+    context.repo({ pull_number: opts.pr.number, per_page: 100 }),
+  );
+
+  const hasAnyMerges = full_commits.some((commit) => commit.parents.length > 1);
+  const commits = full_commits.map((commit) => commit.sha);
+
+  if (hasAnyMerges) {
+    log(
+      'backportImpl',
+      LogLevel.ERROR,
+      `Merge commits detected, backport will not be performed.`,
+    );
+    await context.octokit.issues.createComment(
+      context.repo({
+        issue_number: opts.pr.number,
+        body: 'This PR has merge commits and must be backported manually.',
+      }),
+    );
+
+    return false;
+  }
 
   if (commits.length === 0) {
     log(
