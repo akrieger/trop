@@ -399,23 +399,15 @@ const createBackportComment = async (
     `Creating backport comment for #${prNumber}`,
   );
 
-  let body = `Backport of #${prNumber}\n\nSee that PR for details.`;
-
-  const onelineMatch = pr.body?.match(
-    /(?:(?:\r?\n)|^)notes: (.+?)(?:(?:\r?\n)|$)/gi,
+  let originalSummary = 'None';
+  const extractedSummary = (pr.body || '').match(
+    /####\s*Summary\s*\r?\n(.*)\r?\n/,
   );
-  const multilineMatch = pr.body?.match(
-    /(?:(?:\r?\n)Notes:(?:\r?\n)((?:\*.+(?:(?:\r?\n)|$))+))/gi,
-  );
-
-  // attach release notes to backport PR body
-  if (onelineMatch && onelineMatch[0]) {
-    body += `\n\n${onelineMatch[0]}`;
-  } else if (multilineMatch && multilineMatch[0]) {
-    body += `\n\n${multilineMatch[0]}`;
-  } else {
-    body += '\n\nNotes: no-notes';
+  if (extractedSummary) {
+    originalSummary = extractedSummary[1].trim();
   }
+
+  let body = `#### Summary\n${originalSummary}\n#### Purpose of change\nBackport of #${prNumber}. See that PR for details.`;
 
   return body;
 };
