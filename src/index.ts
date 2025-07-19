@@ -204,6 +204,23 @@ const probotHandler: ApplicationFunction = async (robot, { getRouter }) => {
         (run) => run.name === BACKPORT_APPROVAL_CHECK,
       );
 
+      if (checkRun) {
+        await updateBackportValidityCheck(context, checkRun, {
+          title: 'Skipped',
+          summary: 'Cleaning up stale checks.',
+          conclusion: CheckRunStatus.SUCCESS,
+        });
+      }
+      if (backportApprovalCheck) {
+        await updateBackportApprovalCheck(context, backportApprovalCheck, {
+          title: 'Skipped',
+          summary: 'Cleaning up stale checks.',
+          conclusion: CheckRunStatus.SUCCESS,
+        });
+      }
+      return;
+
+      /*
       if (!checkRun) {
         robot.log(`Queueing new check run for #${pr.number}`);
         const response = await context.octokit.checks.create(
@@ -398,6 +415,7 @@ const probotHandler: ApplicationFunction = async (robot, { getRouter }) => {
       if (['edited', 'synchronize'].includes(action)) {
         maybeRunCheck(context);
       }
+      */
     },
   );
 
@@ -427,6 +445,16 @@ const probotHandler: ApplicationFunction = async (robot, { getRouter }) => {
 
       let backportCheck = await getBackportInformationCheck(context);
 
+      if (backportCheck) {
+        await updateBackportInformationCheck(context, backportCheck, {
+          title: 'Backport Information Provided',
+          summary: 'No backport information required at this time.',
+          conclusion: CheckRunStatus.SUCCESS,
+        });
+      }
+      return;
+
+      /*
       if (!backportCheck) {
         await queueBackportInformationCheck(context);
         backportCheck = (await getBackportInformationCheck(context))!;
@@ -467,6 +495,7 @@ const probotHandler: ApplicationFunction = async (robot, { getRouter }) => {
         summary: 'This PR contains the required  backport information.',
         conclusion: CheckRunStatus.SUCCESS,
       });
+      */
     },
   );
 
