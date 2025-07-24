@@ -107,14 +107,8 @@ const tryBackportAllCommits = async (opts: TryBackportOptions) => {
   if (hasAnyMerges) {
     log(
       'backportImpl',
-      LogLevel.ERROR,
-      `Merge commits detected, backport will not be performed.`,
-    );
-    await context.octokit.issues.createComment(
-      context.repo({
-        issue_number: opts.pr.number,
-        body: 'This PR has merge commits and must be backported manually.',
-      }),
+      LogLevel.WARN,
+      `Merge commits detected, graft backport will not be performed.`,
     );
 
     return false;
