@@ -208,7 +208,7 @@ const tryBackportSquashCommit = async (opts: TryBackportOptions) => {
   log('backportImpl', LogLevel.INFO, `Fetching squash commit details`);
 
   if (!opts.pr.merged) {
-    log('backportImpl', LogLevel.INFO, `PR was not squash merged - aborting`);
+    log('backportImpl', LogLevel.INFO, `PR was not yet merged - aborting`);
     return false;
   }
 
